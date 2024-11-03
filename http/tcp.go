@@ -67,7 +67,7 @@ func NewProxyServer(logger *zap.Logger) *ProxyServer {
 func (s *ProxyServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: false,
-		DefaultTCPConnCloser: zerocopy.JustClose,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 

@@ -20,7 +20,7 @@ func NewTCPTransparentServer() (zerocopy.TCPServer, error) {
 func (TCPTransparentServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: false,
-		DefaultTCPConnCloser: zerocopy.JustClose,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 

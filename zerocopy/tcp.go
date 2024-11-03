@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
-	"fmt"
-	"io"
 	mrand "math/rand/v2"
 	"net"
 
@@ -93,33 +91,6 @@ func (o *TCPConnOpener) Open(ctx context.Context, b []byte) (DirectReadWriteClos
 // Upon returning, the TCP connection is safe to close.
 type TCPConnCloser func(conn *net.TCPConn, logger *zap.Logger)
 
-// JustClose closes the TCP connection without any special handling.
-func JustClose(conn *net.TCPConn, logger *zap.Logger) {
-}
-
-// ForceReset forces a reset of the TCP connection, regardless of
-// whether there's unread data or not.
-func ForceReset(conn *net.TCPConn, logger *zap.Logger) {
-	if err := conn.SetLinger(0); err != nil {
-		logger.Warn("Failed to set SO_LINGER on TCP connection", zap.Error(err))
-	}
-	logger.Info("Forcing RST on TCP connection")
-}
-
-// CloseWriteDrain closes the write end of the TCP connection,
-// then drain the read end.
-func CloseWriteDrain(conn *net.TCPConn, logger *zap.Logger) {
-	if err := conn.CloseWrite(); err != nil {
-		logger.Warn("Failed to close write half of TCP connection", zap.Error(err))
-	}
-
-	n, err := io.Copy(io.Discard, conn)
-	logger.Info("Drained TCP connection",
-		zap.Int64("bytesRead", n),
-		zap.Error(err),
-	)
-}
-
 // ReplyWithGibberish keeps reading and replying with random garbage until EOF or error.
 func ReplyWithGibberish(conn *net.TCPConn, logger *zap.Logger) {
 	const (
@@ -188,17 +159,7 @@ func ReplyWithGibberish(conn *net.TCPConn, logger *zap.Logger) {
 // ParseRejectPolicy parses a string representation of a reject policy.
 func ParseRejectPolicy(rejectPolicy string, serverDefault TCPConnCloser) (TCPConnCloser, error) {
 	switch rejectPolicy {
-	case "":
-		return serverDefault, nil
-	case "JustClose":
-		return JustClose, nil
-	case "ForceReset":
-		return ForceReset, nil
-	case "CloseWriteDrain":
-		return CloseWriteDrain, nil
-	case "ReplyWithGibberish":
-		return ReplyWithGibberish, nil
 	default:
-		return nil, fmt.Errorf("invalid reject policy: %s", rejectPolicy)
+		return ReplyWithGibberish, nil
 	}
 }

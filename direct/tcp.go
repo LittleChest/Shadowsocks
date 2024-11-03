@@ -58,7 +58,7 @@ func NewTCPServer(targetAddr conn.Addr) *TCPServer {
 func (s *TCPServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: false,
-		DefaultTCPConnCloser: zerocopy.JustClose,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 
@@ -105,7 +105,7 @@ func NewShadowsocksNoneTCPServer() ShadowsocksNoneTCPServer {
 func (ShadowsocksNoneTCPServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: false,
-		DefaultTCPConnCloser: zerocopy.JustClose,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 
@@ -178,7 +178,7 @@ func NewSocks5TCPServer(enableTCP, enableUDP bool) *Socks5TCPServer {
 func (s *Socks5TCPServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: false,
-		DefaultTCPConnCloser: zerocopy.JustClose,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 

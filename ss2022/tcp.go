@@ -181,7 +181,7 @@ func NewTCPServer(allowSegmentedFixedLengthHeader bool, userCipherConfig UserCip
 func (s *TCPServer) Info() zerocopy.TCPServerInfo {
 	return zerocopy.TCPServerInfo{
 		NativeInitialPayload: true,
-		DefaultTCPConnCloser: zerocopy.ForceReset,
+		DefaultTCPConnCloser: zerocopy.ReplyWithGibberish,
 	}
 }
 
